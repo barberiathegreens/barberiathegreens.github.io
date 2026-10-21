@@ -4,39 +4,79 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Greens · Admin</title>
+<meta name="description" content="Reserva tu cita en Barbería The Greens. Paga por adelantado y recibe tu cortesía.">
 <meta name="theme-color" content="#1D5A3C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Greens Admin">
+<meta property="og:title" content="The Greens · Admin">
+<meta property="og:description" content="Agenda tu corte en segundos. Paga por adelantado y recibe tu cortesía.">
+<meta property="og:image" content="https://barberiathegreens.github.io/icon-512.png">
 <link rel="manifest" href="manifest-admin.json">
 <link rel="icon" href="icon-admin-192.png">
 <link rel="apple-touch-icon" href="icon-admin-apple.png">
-<style>
-  html, body { margin: 0; height: 100%; background: #1D5A3C; }
-  body { padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box; }
-  iframe { display: block; width: 100%; height: 100%; border: 0; background: #EEF2EE; }
-  .msg { font: 16px/1.5 system-ui, sans-serif; color: #fff; padding: 32px 20px; max-width: 480px; margin: 0 auto; }
-  .msg a { color: #F5EDDA; }
-</style>
-<script src="config.js"></script>
 </head>
 <body>
+<style>
+body { padding-top: env(safe-area-inset-top, 0px); }
+body.con-barra { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+.dl { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; align-items: center; gap: 12px; background: #15201A; color: #fff;
+  padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); font-family: var(--body); }
+.dl[hidden] { display: none; }
+.dl img { width: 40px; height: 40px; border-radius: 10px; flex: none; }
+.dl .t { flex: 1; min-width: 0; line-height: 1.3; }
+.dl .t b { display: block; font-size: 15px; }
+.dl .t span { font-size: 13px; opacity: .8; }
+.dl .go { border: 0; border-radius: 999px; background: #C9A24A; color: #15201A; font-weight: 700; font-size: 14px; padding: 11px 16px; cursor: pointer; white-space: nowrap; }
+.dl .x { border: 0; background: none; color: #fff; opacity: .7; font-size: 24px; line-height: 1; padding: 4px 6px; cursor: pointer; }
+.dsheet { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
+.dsheet[hidden] { display: none; }
+.dsheet .c { background: var(--surface); color: var(--ink); width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
+.dsheet h2 { margin: 0 0 6px; font-size: 20px; }
+.dsheet p { margin: 0 0 14px; color: var(--muted); }
+.dsheet ol { margin: 0 0 18px; padding-left: 22px; display: grid; gap: 10px; font-size: 16px; }
+.dsheet .ico { display: inline-block; vertical-align: -4px; }
+</style>
+<style>
+#cargando { min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 14px; background: #1D5A3C; color: #fff; font: 600 16px/1.4 system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
+#cargando img { width: 84px; height: 84px; border-radius: 20px; }
+#cargando button { border: 0; border-radius: 999px; background: #C9A24A; color: #15201A; font: 700 15px/1 system-ui, sans-serif; padding: 12px 18px; cursor: pointer; }
+</style>
+<div id="cargando"><img src="icon-192.png" alt=""><div id="cargando-txt">Cargando…</div></div>
 <script>
-  (function () {
-    var url = window.APP_URL || '';
-    if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url)) {
-      document.body.innerHTML = '<div class="msg"><b>Falta el link de la app.</b><br>Abre config.js y pega el link que termina en /exec.</div>';
-      return;
-    }
-    var f = document.createElement('iframe');
-    f.src = url + '?admin=1';
-    f.title = 'The Greens · Admin';
-    f.allow = 'clipboard-write';
-    document.body.appendChild(f);
-  })();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+(function () {
+  var API = 'https://script.google.com/macros/s/AKfycbw60SoWQ_jl0b3jXiVId6NRir848bhslPvkHTiwHc2WNWyQG3l3OrvVK32QMsvkHMjD/exec';
+  var BOOT = {"modo": "admin", "url": "https://barberiathegreens.github.io/", "urlAdmin": "https://barberiathegreens.github.io/admin.html", "apiUrl": "https://script.google.com/macros/s/AKfycbw60SoWQ_jl0b3jXiVId6NRir848bhslPvkHTiwHc2WNWyQG3l3OrvVK32QMsvkHMjD/exec"};
+  var KEY = 'tg_src_v1';
+  var listo = false;
+  function montar(src) {
+    if (listo) return; listo = true;
+    src = src.replace(/\/\*BOOT\*\/[\s\S]*?\/\*ENDBOOT\*\//, 'window.BOOT = ' + JSON.stringify(BOOT) + ';');
+    var doc = new DOMParser().parseFromString(src, 'text/html');
+    doc.querySelectorAll('link[rel=stylesheet], link[rel=preconnect], style').forEach(function (n) { document.head.appendChild(document.importNode(n, true)); });
+    var app = doc.getElementById('app');
+    document.getElementById('cargando').replaceWith(document.importNode(app, true));
+    doc.querySelectorAll('script').forEach(function (s) {
+      var n = document.createElement('script'); n.textContent = s.textContent; document.body.appendChild(n);
+    });
+  }
+  function error() {
+    var t = document.getElementById('cargando-txt'); if (!t) return;
+    t.innerHTML = 'No pudimos cargar la agenda.<br>Revisa tu conexión.';
+    var b = document.createElement('button'); b.textContent = 'Reintentar'; b.onclick = function () { location.reload(); };
+    t.parentNode.appendChild(b);
+  }
+  var cache = null;
+  try { cache = localStorage.getItem(KEY); } catch (e) { }
+  if (cache) montar(cache);
+  fetch(API + '?src=app').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (txt) {
+    if (txt.indexOf('/*BOOT*/') < 0) throw new Error('src');
+    try { localStorage.setItem(KEY, txt); } catch (e) { }
+    montar(txt);
+  }).catch(function () { if (!listo) error(); });
+})();
 </script>
-<noscript><div class="msg">Activa JavaScript para usar la app.</div></noscript>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});</script>
 </body>
 </html>

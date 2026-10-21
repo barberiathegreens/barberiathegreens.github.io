@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#1D5A3C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="The Greens">
 <meta property="og:title" content="Barbería The Greens · Reserva tu cita">
 <meta property="og:description" content="Agenda tu corte en segundos. Paga por adelantado y recibe tu cortesía.">
@@ -16,112 +16,118 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-apple.png">
-<style>
-  html, body { margin: 0; height: 100%; background: #1D5A3C; }
-  body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  iframe { display: block; flex: 1; width: 100%; border: 0; background: #EEF2EE; }
-  .msg { color: #fff; padding: 32px 20px; max-width: 480px; margin: 0 auto; }
-  .bar { display: flex; align-items: center; gap: 12px; background: #15201A; color: #fff;
-    padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); }
-  .bar[hidden] { display: none; }
-  .bar img { width: 40px; height: 40px; border-radius: 10px; flex: none; }
-  .bar .txt { flex: 1; min-width: 0; }
-  .bar b { display: block; font-size: 15px; }
-  .bar span { font-size: 13px; opacity: .8; }
-  .bar .go { border: 0; border-radius: 999px; background: #C9A24A; color: #15201A; font: 700 14px/1 inherit; padding: 11px 16px; cursor: pointer; white-space: nowrap; }
-  .bar .x { border: 0; background: none; color: #fff; opacity: .7; font-size: 22px; line-height: 1; padding: 4px 6px; cursor: pointer; }
-  .sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 10; }
-  .sheet[hidden] { display: none; }
-  .card { background: #fff; color: #15201A; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0;
-    padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
-  .card h2 { margin: 0 0 6px; font-size: 20px; }
-  .card p { margin: 0 0 14px; color: #59665E; }
-  .card ol { margin: 0 0 18px; padding-left: 22px; display: grid; gap: 10px; font-size: 16px; }
-  .card .ok { width: 100%; border: 0; border-radius: 12px; background: #1D5A3C; color: #fff; font: 700 16px/1 inherit; padding: 15px; cursor: pointer; }
-  .ico { display: inline-block; vertical-align: -4px; }
-</style>
-<script src="config.js"></script>
 </head>
 <body>
+<style>
+body { padding-top: env(safe-area-inset-top, 0px); }
+body.con-barra { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+.dl { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; align-items: center; gap: 12px; background: #15201A; color: #fff;
+  padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); font-family: var(--body); }
+.dl[hidden] { display: none; }
+.dl img { width: 40px; height: 40px; border-radius: 10px; flex: none; }
+.dl .t { flex: 1; min-width: 0; line-height: 1.3; }
+.dl .t b { display: block; font-size: 15px; }
+.dl .t span { font-size: 13px; opacity: .8; }
+.dl .go { border: 0; border-radius: 999px; background: #C9A24A; color: #15201A; font-weight: 700; font-size: 14px; padding: 11px 16px; cursor: pointer; white-space: nowrap; }
+.dl .x { border: 0; background: none; color: #fff; opacity: .7; font-size: 24px; line-height: 1; padding: 4px 6px; cursor: pointer; }
+.dsheet { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
+.dsheet[hidden] { display: none; }
+.dsheet .c { background: var(--surface); color: var(--ink); width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
+.dsheet h2 { margin: 0 0 6px; font-size: 20px; }
+.dsheet p { margin: 0 0 14px; color: var(--muted); }
+.dsheet ol { margin: 0 0 18px; padding-left: 22px; display: grid; gap: 10px; font-size: 16px; }
+.dsheet .ico { display: inline-block; vertical-align: -4px; }
+</style>
+<style>
+#cargando { min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 14px; background: #1D5A3C; color: #fff; font: 600 16px/1.4 system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
+#cargando img { width: 84px; height: 84px; border-radius: 20px; }
+#cargando button { border: 0; border-radius: 999px; background: #C9A24A; color: #15201A; font: 700 15px/1 system-ui, sans-serif; padding: 12px 18px; cursor: pointer; }
+</style>
+<div id="cargando"><img src="icon-192.png" alt=""><div id="cargando-txt">Cargando…</div></div>
 <script>
-  (function () {
-    var url = window.APP_URL || '';
-    if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url)) {
-      document.body.innerHTML = '<div class="msg"><b>Falta el link de la app.</b><br>Abre config.js y pega el link que termina en /exec.</div>';
-      return;
-    }
-    var f = document.createElement('iframe');
-    f.src = url;
-    f.title = 'Barbería The Greens · Reserva tu cita';
-    f.allow = 'clipboard-write';
-    document.body.appendChild(f);
-  })();
+(function () {
+  var API = 'https://script.google.com/macros/s/AKfycbw60SoWQ_jl0b3jXiVId6NRir848bhslPvkHTiwHc2WNWyQG3l3OrvVK32QMsvkHMjD/exec';
+  var BOOT = {"modo": "cliente", "url": "https://barberiathegreens.github.io/", "urlAdmin": "https://barberiathegreens.github.io/admin.html", "apiUrl": "https://script.google.com/macros/s/AKfycbw60SoWQ_jl0b3jXiVId6NRir848bhslPvkHTiwHc2WNWyQG3l3OrvVK32QMsvkHMjD/exec"};
+  var KEY = 'tg_src_v1';
+  var listo = false;
+  function montar(src) {
+    if (listo) return; listo = true;
+    src = src.replace(/\/\*BOOT\*\/[\s\S]*?\/\*ENDBOOT\*\//, 'window.BOOT = ' + JSON.stringify(BOOT) + ';');
+    var doc = new DOMParser().parseFromString(src, 'text/html');
+    doc.querySelectorAll('link[rel=stylesheet], link[rel=preconnect], style').forEach(function (n) { document.head.appendChild(document.importNode(n, true)); });
+    var app = doc.getElementById('app');
+    document.getElementById('cargando').replaceWith(document.importNode(app, true));
+    doc.querySelectorAll('script').forEach(function (s) {
+      var n = document.createElement('script'); n.textContent = s.textContent; document.body.appendChild(n);
+    });
+  }
+  function error() {
+    var t = document.getElementById('cargando-txt'); if (!t) return;
+    t.innerHTML = 'No pudimos cargar la agenda.<br>Revisa tu conexión.';
+    var b = document.createElement('button'); b.textContent = 'Reintentar'; b.onclick = function () { location.reload(); };
+    t.parentNode.appendChild(b);
+  }
+  var cache = null;
+  try { cache = localStorage.getItem(KEY); } catch (e) { }
+  if (cache) montar(cache);
+  fetch(API + '?src=app').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (txt) {
+    if (txt.indexOf('/*BOOT*/') < 0) throw new Error('src');
+    try { localStorage.setItem(KEY, txt); } catch (e) { }
+    montar(txt);
+  }).catch(function () { if (!listo) error(); });
+})();
 </script>
 
-<div class="bar" id="bar" hidden>
+<div class="dl" id="dl" hidden>
   <img src="icon-192.png" alt="">
-  <div class="txt"><b>App The Greens</b><span>Reserva más rápido desde tu celular</span></div>
-  <button class="go" id="go" type="button">Descargar app</button>
-  <button class="x" id="x" type="button" aria-label="Cerrar">×</button>
+  <div class="t"><b>App The Greens</b><span>Reserva más rápido desde tu celular</span></div>
+  <button class="go" id="dl-go" type="button">Descargar app</button>
+  <button class="x" id="dl-x" type="button" aria-label="Cerrar">×</button>
 </div>
-
-<div class="sheet" id="sheet" hidden>
-  <div class="card" role="dialog" aria-modal="true" aria-labelledby="sh-t">
-    <h2 id="sh-t">Instala la app</h2>
-    <p id="sh-p"></p>
-    <ol id="sh-ol"></ol>
-    <button class="ok" id="ok" type="button">Entendido</button>
+<div class="dsheet" id="dsheet" hidden>
+  <div class="c" role="dialog" aria-modal="true" aria-labelledby="ds-t">
+    <h2 id="ds-t">Instala la app</h2>
+    <p id="ds-p"></p>
+    <ol id="ds-ol"></ol>
+    <button class="btn pri big" id="ds-ok" type="button">Entendido</button>
   </div>
 </div>
-
 <script>
   (function () {
     var ua = navigator.userAgent || '';
     var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
     var iOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
     var inApp = /Instagram|FBAN|FBAV|FB_IAB|Line\/|TikTok|WhatsApp/i.test(ua);
-    var iOSOtroNavegador = iOS && /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    var iOSOtro = iOS && /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
     var movil = iOS || /Android/i.test(ua);
-    var bar = document.getElementById('bar'), sheet = document.getElementById('sheet');
-    var prompt = null;
-    var SHARE = '<svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D5A3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+    var bar = document.getElementById('dl'), sheet = document.getElementById('dsheet'), evt = null;
+    var SHARE = '<svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
     var MENU = '<b>⋮</b>';
-
-    function cerrado() { try { return localStorage.getItem('tg_bar_off') === '1'; } catch (e) { return false; } }
-    if (standalone || !movil || cerrado()) return;
-    bar.hidden = false;
-
-    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); prompt = e; });
-    window.addEventListener('appinstalled', function () { bar.hidden = true; });
-
+    function off() { try { return localStorage.getItem('tg_bar_off') === '1'; } catch (e) { return false; } }
+    function ocultar() { bar.hidden = true; document.body.classList.remove('con-barra'); }
+    if (standalone || !movil || off()) return;
+    bar.hidden = false; document.body.classList.add('con-barra');
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); evt = e; });
+    window.addEventListener('appinstalled', ocultar);
     function mostrar(p, pasos) {
-      document.getElementById('sh-p').textContent = p;
-      document.getElementById('sh-ol').innerHTML = pasos.map(function (s) { return '<li>' + s + '</li>'; }).join('');
+      document.getElementById('ds-p').textContent = p;
+      document.getElementById('ds-ol').innerHTML = pasos.map(function (s) { return '<li>' + s + '</li>'; }).join('');
       sheet.hidden = false;
     }
-    document.getElementById('go').onclick = function () {
-      if (prompt) {
-        prompt.prompt();
-        prompt.userChoice.then(function (r) { if (r.outcome === 'accepted') bar.hidden = true; prompt = null; });
-        return;
-      }
-      if (inApp) {
-        mostrar('Estás dentro de otra app (Instagram, WhatsApp…). Ábrela en tu navegador para instalarla:', iOS
-          ? ['Toca los <b>tres puntos</b> o el ícono de compartir arriba.', 'Elige <b>Abrir en Safari</b>.', 'En Safari toca ' + SHARE + ' y luego <b>Agregar a inicio</b>.']
-          : ['Toca ' + MENU + ' arriba a la derecha.', 'Elige <b>Abrir en Chrome</b>.', 'Toca <b>Descargar app</b> otra vez.']);
-      } else if (iOSOtroNavegador) {
-        mostrar('En iPhone la app se instala desde Safari:', ['Copia este link y ábrelo en <b>Safari</b>.', 'Toca ' + SHARE + ' (Compartir).', 'Elige <b>Agregar a inicio</b> y luego <b>Agregar</b>.']);
-      } else if (iOS) {
-        mostrar('Queda en tu pantalla de inicio con el ícono de The Greens:', ['Toca ' + SHARE + ' (Compartir) abajo en Safari.', 'Desliza y elige <b>Agregar a inicio</b>.', 'Toca <b>Agregar</b>.']);
-      } else {
-        mostrar('Queda en tu celular con el ícono de The Greens:', ['Toca ' + MENU + ' arriba a la derecha en Chrome.', 'Elige <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.', 'Confirma con <b>Instalar</b>.']);
-      }
+    document.getElementById('dl-go').onclick = function () {
+      if (evt) { evt.prompt(); evt.userChoice.then(function (r) { if (r.outcome === 'accepted') ocultar(); evt = null; }); return; }
+      if (inApp) mostrar('Estás dentro de otra app (Instagram, WhatsApp…). Ábrela en tu navegador para instalarla:', iOS
+        ? ['Toca los <b>tres puntos</b> o el ícono de compartir arriba.', 'Elige <b>Abrir en Safari</b>.', 'En Safari toca ' + SHARE + ' y luego <b>Agregar a inicio</b>.']
+        : ['Toca ' + MENU + ' arriba a la derecha.', 'Elige <b>Abrir en Chrome</b>.', 'Toca <b>Descargar app</b> otra vez.']);
+      else if (iOSOtro) mostrar('En iPhone la app se instala desde Safari:', ['Abre este link en <b>Safari</b>.', 'Toca ' + SHARE + ' (Compartir).', 'Elige <b>Agregar a inicio</b> y luego <b>Agregar</b>.']);
+      else if (iOS) mostrar('Queda en tu pantalla de inicio con el ícono de The Greens:', ['Toca ' + SHARE + ' (Compartir) abajo en Safari.', 'Desliza y elige <b>Agregar a inicio</b>.', 'Toca <b>Agregar</b>.']);
+      else mostrar('Queda en tu celular con el ícono de The Greens:', ['Toca ' + MENU + ' arriba a la derecha en Chrome.', 'Elige <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.', 'Confirma con <b>Instalar</b>.']);
     };
-    document.getElementById('ok').onclick = function () { sheet.hidden = true; };
+    document.getElementById('ds-ok').onclick = function () { sheet.hidden = true; };
     sheet.onclick = function (e) { if (e.target === sheet) sheet.hidden = true; };
-    document.getElementById('x').onclick = function () { bar.hidden = true; try { localStorage.setItem('tg_bar_off', '1'); } catch (e) { } };
+    document.getElementById('dl-x').onclick = function () { ocultar(); try { localStorage.setItem('tg_bar_off', '1'); } catch (e) { } };
   })();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 </script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});</script>
 </body>
 </html>
