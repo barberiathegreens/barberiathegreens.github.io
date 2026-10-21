@@ -48,11 +48,11 @@ body.con-barra { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); 
 (function () {
   var API = 'https://script.google.com/macros/s/AKfycbw60SoWQ_jl0b3jXiVId6NRir848bhslPvkHTiwHc2WNWyQG3l3OrvVK32QMsvkHMjD/exec';
   var BOOT = {"modo": "admin", "url": "https://barberiathegreens.github.io/", "urlAdmin": "https://barberiathegreens.github.io/admin.html", "apiUrl": "https://script.google.com/macros/s/AKfycbw60SoWQ_jl0b3jXiVId6NRir848bhslPvkHTiwHc2WNWyQG3l3OrvVK32QMsvkHMjD/exec"};
-  var KEY = 'tg_src_v1';
+  var KEY = 'tg_src_v2';
   var listo = false;
   function montar(src) {
     if (listo) return; listo = true;
-    src = src.replace(/\/\*BOOT\*\/[\s\S]*?\/\*ENDBOOT\*\//, 'window.BOOT = ' + JSON.stringify(BOOT) + ';');
+    src = src.replace(/\/\*BOOT\*\/[\s\S]*?\/\*ENDBOOT\*\/|window\.BOOT = <\?!= bootJson \?>;/, 'window.BOOT = ' + JSON.stringify(BOOT) + ';');
     var doc = new DOMParser().parseFromString(src, 'text/html');
     doc.querySelectorAll('link[rel=stylesheet], link[rel=preconnect], style').forEach(function (n) { document.head.appendChild(document.importNode(n, true)); });
     var app = doc.getElementById('app');
@@ -71,7 +71,7 @@ body.con-barra { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); 
   try { cache = localStorage.getItem(KEY); } catch (e) { }
   if (cache) montar(cache);
   fetch(API + '?src=app').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (txt) {
-    if (txt.indexOf('/*BOOT*/') < 0) throw new Error('src');
+    if (txt.indexOf('bootJson') < 0) throw new Error('src');
     try { localStorage.setItem(KEY, txt); } catch (e) { }
     montar(txt);
   }).catch(function () { if (!listo) error(); });
