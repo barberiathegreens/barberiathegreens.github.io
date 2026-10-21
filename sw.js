@@ -1,5 +1,5 @@
 // Guarda la "cáscara" de la app para que abra rápido. Las citas siempre vienen en vivo de Google.
-var CACHE = 'greens-v1';
+var CACHE = 'greens-v2';
 var ARCHIVOS = ['./', './index.html', './admin.html', './config.js', './manifest.json', './manifest-admin.json',
   './icon-192.png', './icon-512.png', './icon-admin-192.png', './icon-admin-512.png'];
 self.addEventListener('install', function (e) {

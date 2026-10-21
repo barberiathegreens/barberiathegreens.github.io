@@ -3,21 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Greens · Citas</title>
+<title>Barbería The Greens · Reserva tu cita</title>
+<meta name="description" content="Reserva tu cita en Barbería The Greens. Paga por adelantado y recibe tu cortesía.">
 <meta name="theme-color" content="#1D5A3C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="The Greens">
+<meta property="og:title" content="Barbería The Greens · Reserva tu cita">
+<meta property="og:description" content="Agenda tu corte en segundos. Paga por adelantado y recibe tu cortesía.">
+<meta property="og:image" content="https://barberiathegreens.github.io/icon-512.png">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-apple.png">
 <style>
   html, body { margin: 0; height: 100%; background: #1D5A3C; }
-  body { padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box; }
-  iframe { display: block; width: 100%; height: 100%; border: 0; background: #EEF2EE; }
-  .msg { font: 16px/1.5 system-ui, sans-serif; color: #fff; padding: 32px 20px; max-width: 480px; margin: 0 auto; }
-  .msg a { color: #F5EDDA; }
+  body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  iframe { display: block; flex: 1; width: 100%; border: 0; background: #EEF2EE; }
+  .msg { color: #fff; padding: 32px 20px; max-width: 480px; margin: 0 auto; }
+  .bar { display: flex; align-items: center; gap: 12px; background: #15201A; color: #fff;
+    padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); }
+  .bar[hidden] { display: none; }
+  .bar img { width: 40px; height: 40px; border-radius: 10px; flex: none; }
+  .bar .txt { flex: 1; min-width: 0; }
+  .bar b { display: block; font-size: 15px; }
+  .bar span { font-size: 13px; opacity: .8; }
+  .bar .go { border: 0; border-radius: 999px; background: #C9A24A; color: #15201A; font: 700 14px/1 inherit; padding: 11px 16px; cursor: pointer; white-space: nowrap; }
+  .bar .x { border: 0; background: none; color: #fff; opacity: .7; font-size: 22px; line-height: 1; padding: 4px 6px; cursor: pointer; }
+  .sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 10; }
+  .sheet[hidden] { display: none; }
+  .card { background: #fff; color: #15201A; width: 100%; max-width: 480px; border-radius: 18px 18px 0 0;
+    padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
+  .card h2 { margin: 0 0 6px; font-size: 20px; }
+  .card p { margin: 0 0 14px; color: #59665E; }
+  .card ol { margin: 0 0 18px; padding-left: 22px; display: grid; gap: 10px; font-size: 16px; }
+  .card .ok { width: 100%; border: 0; border-radius: 12px; background: #1D5A3C; color: #fff; font: 700 16px/1 inherit; padding: 15px; cursor: pointer; }
+  .ico { display: inline-block; vertical-align: -4px; }
 </style>
 <script src="config.js"></script>
 </head>
@@ -30,13 +51,77 @@
       return;
     }
     var f = document.createElement('iframe');
-    f.src = url + '';
-    f.title = 'The Greens · Citas';
+    f.src = url;
+    f.title = 'Barbería The Greens · Reserva tu cita';
     f.allow = 'clipboard-write';
     document.body.appendChild(f);
   })();
+</script>
+
+<div class="bar" id="bar" hidden>
+  <img src="icon-192.png" alt="">
+  <div class="txt"><b>App The Greens</b><span>Reserva más rápido desde tu celular</span></div>
+  <button class="go" id="go" type="button">Descargar app</button>
+  <button class="x" id="x" type="button" aria-label="Cerrar">×</button>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="sh-t">
+    <h2 id="sh-t">Instala la app</h2>
+    <p id="sh-p"></p>
+    <ol id="sh-ol"></ol>
+    <button class="ok" id="ok" type="button">Entendido</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var ua = navigator.userAgent || '';
+    var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    var iOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var inApp = /Instagram|FBAN|FBAV|FB_IAB|Line\/|TikTok|WhatsApp/i.test(ua);
+    var iOSOtroNavegador = iOS && /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    var movil = iOS || /Android/i.test(ua);
+    var bar = document.getElementById('bar'), sheet = document.getElementById('sheet');
+    var prompt = null;
+    var SHARE = '<svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D5A3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+    var MENU = '<b>⋮</b>';
+
+    function cerrado() { try { return localStorage.getItem('tg_bar_off') === '1'; } catch (e) { return false; } }
+    if (standalone || !movil || cerrado()) return;
+    bar.hidden = false;
+
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); prompt = e; });
+    window.addEventListener('appinstalled', function () { bar.hidden = true; });
+
+    function mostrar(p, pasos) {
+      document.getElementById('sh-p').textContent = p;
+      document.getElementById('sh-ol').innerHTML = pasos.map(function (s) { return '<li>' + s + '</li>'; }).join('');
+      sheet.hidden = false;
+    }
+    document.getElementById('go').onclick = function () {
+      if (prompt) {
+        prompt.prompt();
+        prompt.userChoice.then(function (r) { if (r.outcome === 'accepted') bar.hidden = true; prompt = null; });
+        return;
+      }
+      if (inApp) {
+        mostrar('Estás dentro de otra app (Instagram, WhatsApp…). Ábrela en tu navegador para instalarla:', iOS
+          ? ['Toca los <b>tres puntos</b> o el ícono de compartir arriba.', 'Elige <b>Abrir en Safari</b>.', 'En Safari toca ' + SHARE + ' y luego <b>Agregar a inicio</b>.']
+          : ['Toca ' + MENU + ' arriba a la derecha.', 'Elige <b>Abrir en Chrome</b>.', 'Toca <b>Descargar app</b> otra vez.']);
+      } else if (iOSOtroNavegador) {
+        mostrar('En iPhone la app se instala desde Safari:', ['Copia este link y ábrelo en <b>Safari</b>.', 'Toca ' + SHARE + ' (Compartir).', 'Elige <b>Agregar a inicio</b> y luego <b>Agregar</b>.']);
+      } else if (iOS) {
+        mostrar('Queda en tu pantalla de inicio con el ícono de The Greens:', ['Toca ' + SHARE + ' (Compartir) abajo en Safari.', 'Desliza y elige <b>Agregar a inicio</b>.', 'Toca <b>Agregar</b>.']);
+      } else {
+        mostrar('Queda en tu celular con el ícono de The Greens:', ['Toca ' + MENU + ' arriba a la derecha en Chrome.', 'Elige <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.', 'Confirma con <b>Instalar</b>.']);
+      }
+    };
+    document.getElementById('ok').onclick = function () { sheet.hidden = true; };
+    sheet.onclick = function (e) { if (e.target === sheet) sheet.hidden = true; };
+    document.getElementById('x').onclick = function () { bar.hidden = true; try { localStorage.setItem('tg_bar_off', '1'); } catch (e) { } };
+  })();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 </script>
-<noscript><div class="msg">Activa JavaScript para usar la app.</div></noscript>
 </body>
 </html>

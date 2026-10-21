@@ -1,2 +1,3 @@
-# thegreens
-App de citas de Barbería The Greens
+# Barbería The Greens
+
+Reserva tu cita: https://barberiathegreens.github.io/
